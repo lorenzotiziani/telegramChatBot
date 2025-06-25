@@ -47,9 +47,15 @@ def ask_openrouter(conversation):
         return f"⚠️ Errore con OpenRouter: {e}"
 
 # === COMANDI TELEGRAM ===
-
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
+    if not is_authorized(message):
+        print(f"❌ Utente non autorizzato: {message.chat.id}")
+        return
+    bot.send_message(message.chat.id,f"Utente autorizzato: {message.chat.id}, utilizza pure i comandi disponibili")
+
+@bot.message_handler(commands=['ai'])
+def ai(message):
     if not is_authorized(message):
         print(f"❌ Utente non autorizzato: {message.chat.id}")
         return
@@ -70,6 +76,10 @@ def reset_conversation(message):
         return
     user_conversations.pop(message.chat.id, None)
     bot.send_message(message.chat.id, "🗑️ Conversazione resettata. Puoi iniziare una nuova chat.")
+
+@bot.message_handler(commands=['id'])
+def return_id(message):
+    bot.send_message(message.chat.id, message.chat.id)
 
 # === GESTIONE CHAT ===
 
